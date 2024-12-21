@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Principal</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Bienvenido a mi página</h1>
+    </header>
+    <main>
+        <div class="container">
+            <div class="box" id="box1" onclick="window.location.href='/cuadros'">
+                <img src="/images/imagen1.jpg" alt="Imagen 1">
+                <p>Cuadros</p>
+            </div>
+            <div class="box" id="box2" onclick="window.location.href='/tablas'">
+                <img src="/images/imagen2.jpg" alt="Imagen 2">
+                <p>Tablas</p>
+            </div>
+            <div class="box" id="box3" onclick="window.location.href='/accesorios'">
+                <img src="/images/imagen3.jpg" alt="Imagen 3">
+                <p>Accesorios</p>   
+            </div>
+            <div class="box" id="box4" onclick="window.location.href='/copias'">
+                <img src="/images/imagen4.jpg" alt="Imagen 4">
+                <p>Copias</p>
+            </div>
+        </div>
+        
+        <!-- Botones adicionales -->
+        <button id="totalVentasButton" onclick="descargarTotalVentas()">Total Ventas Diarias</button>
+        <button id="resetVentasButton" onclick="resetearVentas()">Resetear Ventas</button>
+    </main>
+
+    <script>
+        // Función para descargar el total de ventas diarias (proporcionada anteriormente)
+        async function descargarTotalVentas() {
+            const { jsPDF } = window.jspdf; // Importar jsPDF
+            const doc = new jsPDF();
+            const lineHeight = 10; // Altura entre líneas de texto
+            const marginTop = 20; // Margen superior
+            const marginBottom = 20; // Margen inferior
+            const pageHeight = doc.internal.pageSize.height - marginBottom;
+
+            try {
+                const response = await fetch('/ventas');
+                if (!response.ok) {
+                    alert('Error al obtener las ventas del servidor');
+                    return;
+                }
+
+                const ventas = await response.json();
+                if (ventas.length === 0) {
+                    alert('No hay ventas registradas para el día de hoy.');
+                    return;
+                }
+
+                const fechaHoy = new Date().toLocaleDateString();
+                doc.text(`Ventas Diarias - ${fechaHoy}`, 10, 10);
+
+                let y = marginTop;
+                let totalVentas = 0;
+                let ventasPorPagina = 4;
+
+                ventas.forEach((venta, index) => {
+                    doc.text(`Venta #${index + 1}`, 10, y);
+                    doc.text(`Producto: ${venta.producto}`, 10, y + lineHeight);
+                    doc.text(`Categoría: ${venta.categoria}`, 10, y + lineHeight * 2);
+                    doc.text(`Precio: $${venta.precio.toFixed(2)}`, 10, y + lineHeight * 3);
+                    doc.text(`Hora: ${venta.hora}`, 10, y + lineHeight * 4);
+                    doc.text(`Fecha: ${venta.fecha}`, 10, y + lineHeight * 5);
+
+                    y += lineHeight * 6;
+                    if ((index + 1) % ventasPorPagina === 0 && index + 1 !== ventas.length) {
+                        doc.addPage();
+                        y = marginTop;
+                    }
+                    totalVentas += venta.precio;
+                });
+
+                if (y > pageHeight) {
+                    doc.addPage();
+                    y = marginTop;
+                }
+                doc.text(`Total de Ventas del Día: $${totalVentas.toFixed(2)}`, 10, y);
+                doc.save(`Ventas_Diarias_${fechaHoy.replace(/\//g, '-')}.pdf`);
+            } catch (error) {
+                alert('Hubo un error al generar el reporte de ventas.');
+                console.error(error);
+            }
+        }
+
+        // Función para resetear las ventas
+        async function resetearVentas() {
+            if (confirm("¿Estás seguro de que quieres resetear las ventas? Esta acción no se puede deshacer.")) {
+                try {
+                    const response = await fetch('/resetear-ventas', { method: 'POST' });
+                    if (!response.ok) {
+                        alert('Error al intentar resetear las ventas.');
+                        return;
+                    }
+                    alert('Ventas reseteadas correctamente.');
+                } catch (error) {
+                    console.error('Error al resetear las ventas:', error);
+                    alert('Hubo un error al intentar resetear las ventas.');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

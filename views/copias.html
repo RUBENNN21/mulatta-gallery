@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copias</title>
+    <link rel="stylesheet" href="/styles2.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Copias</h1>
+    </header>
+    <main>
+        <div class="container">
+            <div class="box">
+                <!-- Imágenes desde la carpeta public/images -->
+                <img src="/images/copia1.jpg" alt="Copia 1">
+                <p>Copia 1</p>
+                <input type="number" id="price1" placeholder="Precio: $30" />
+                <button onclick="generarPDF('Copia 1', document.getElementById('price1').value)">Comprado</button>
+            </div>
+            <div class="box">
+                <img src="/images/copia2.jpg" alt="Copia 2">
+                <p>Copia 2</p>
+                <input type="number" id="price2" placeholder="Precio: $40" />
+                <button onclick="generarPDF('Copia 2', document.getElementById('price2').value)">Comprado</button>
+            </div>
+            <div class="box">
+                <img src="/images/copia3.jpg" alt="Copia 3">
+                <p>Copia 3</p>
+                <input type="number" id="price3" placeholder="Precio: $50" />
+                <button onclick="generarPDF('Copia 3', document.getElementById('price3').value)">Comprado</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function generarPDF(producto, precio) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+    
+            // Obtener la fecha y hora actual
+            const fecha = new Date();
+            const dia = fecha.toLocaleDateString();
+            const hora = fecha.toLocaleTimeString();
+    
+            // Crear el contenido del PDF
+            doc.text(`Producto: ${producto}`, 10, 10);
+            doc.text(`Precio: $${precio}`, 10, 20);
+            doc.text(`Fecha de compra: ${dia}`, 10, 30);
+            doc.text(`Hora de compra: ${hora}`, 10, 40);
+    
+            // Descargar el archivo PDF
+            doc.save(`${producto}_compra.pdf`);
+    
+            // Enviar la venta al servidor para registrar la venta
+            fetch('/registro-venta', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    producto: producto,
+                    precio: precio,
+                    fecha: dia,
+                    hora: hora,
+                    categoria: 'Copias'  // Cambiar la categoría a "Copias"
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Venta registrada correctamente:', data);
+            })
+            .catch(error => {
+                console.error('Error al registrar la venta:', error);
+            });
+        }
+    </script>
+</body>
+</html>
