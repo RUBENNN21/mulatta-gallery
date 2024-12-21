@@ -15,6 +15,7 @@ header {
 main .container {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap; /* Permite que los elementos salten a la siguiente fila si no caben */
     gap: 20px;
     margin: 20px;
 }
@@ -24,14 +25,15 @@ main .container {
     border: 1px solid #ccc;
     padding: 10px;
     text-align: center;
-    width: 150px;
+    width: 200px; /* Tamaño uniforme */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
 }
 
 .box img {
-    width: 100%;
-    height: auto;
+    width: 100%; /* Ajustar imagen al tamaño del contenedor */
+    height: 150px; /* Tamaño fijo para uniformidad */
+    object-fit: cover; /* Evita deformaciones */
     border-radius: 5px;
 }
 
@@ -41,31 +43,25 @@ main .container {
     color: #333;
 }
 
-button {
+input[type="number"] {
+    width: 100%;
+    padding: 5px;
     margin-top: 10px;
-    padding: 5px 10px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+button {
+    padding: 10px 20px;
     background-color: #28a745;
     color: white;
     border: none;
-    border-radius: 3px;
+    border-radius: 5px;
     cursor: pointer;
+    margin-top: 10px;
+    width: 100%; /* Botón ocupa todo el ancho */
 }
 
 button:hover {
     background-color: #218838;
-}
-
-input[type="number"] {
-    width: 100px;
-    padding: 5px;
-    margin-top: 10px;
-    font-size: 16px;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-input[type="number"]:focus {
-    border-color: #28a745;
-    outline: none;
 }

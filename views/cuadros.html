@@ -13,24 +13,40 @@
     </header>
     <main>
         <div class="container">
+            <!-- Cuadro 1 -->
             <div class="box">
-                <!-- Imágenes desde la carpeta public/images -->
-                <img src="/images/cuadro1.jpg" alt="Cuadro 1">
+                <img src="/images/mujer sombra.jpeg" alt="mujer sombra">
                 <p>Cuadro 1</p>
-                <input type="number" id="price1" placeholder="Precio: $50" />
-                <button onclick="generarPDF('Cuadro 1', document.getElementById('price1').value)">Comprado</button>
+                <input type="number" id="price1" placeholder="Precio: $0" />
+                <button onclick="generarPDF('mujer sombra', document.getElementById('price1').value)">Comprado</button>
             </div>
+            <!-- Cuadro 2 -->
             <div class="box">
-                <img src="/images/cuadro2.jpg" alt="Cuadro 2">
+                <img src="/images/mujer dorada.jpeg" alt="mujer dorada">
                 <p>Cuadro 2</p>
-                <input type="number" id="price2" placeholder="Precio: $75" />
-                <button onclick="generarPDF('Cuadro 2', document.getElementById('price2').value)">Comprado</button>
+                <input type="number" id="price2" placeholder="Precio: $0" />
+                <button onclick="generarPDF('mujer dorada', document.getElementById('price2').value)">Comprado</button>
             </div>
+            <!-- Cuadro 3 -->
             <div class="box">
-                <img src="/images/cuadro3.jpg" alt="Cuadro 3">
+                <img src="/images/explosion de colores.jpeg" alt="explosion de colores">
                 <p>Cuadro 3</p>
-                <input type="number" id="price3" placeholder="Precio: $100" />
-                <button onclick="generarPDF('Cuadro 3', document.getElementById('price3').value)">Comprado</button>
+                <input type="number" id="price3" placeholder="Precio: $0" />
+                <button onclick="generarPDF('explosion de colores', document.getElementById('price3').value)">Comprado</button>
+            </div>
+            <!-- Cuadro 4 -->
+            <div class="box">
+                <img src="/images/mujer fantasia.jpeg" alt="mujer fantasia">
+                <p>Cuadro 4</p>
+                <input type="number" id="price4" placeholder="Precio: $0" />
+                <button onclick="generarPDF('mujer fantasia', document.getElementById('price4').value)">Comprado</button>
+            </div>
+            <!-- Cuadro 5 -->
+            <div class="box">
+                <img src="/images/tigre blanco.jpeg" alt="tigre blanco">
+                <p>Cuadro 5</p>
+                <input type="number" id="price5" placeholder="Precio: $0" />
+                <button onclick="generarPDF('tigre blanco', document.getElementById('price5').value)">Comprado</button>
             </div>
         </div>
     </main>
@@ -39,42 +55,33 @@
         function generarPDF(producto, precio) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-    
-            // Obtener la fecha y hora actual
+
             const fecha = new Date();
             const dia = fecha.toLocaleDateString();
             const hora = fecha.toLocaleTimeString();
-    
-            // Crear el contenido del PDF
+
             doc.text(`Producto: ${producto}`, 10, 10);
             doc.text(`Precio: $${precio}`, 10, 20);
             doc.text(`Fecha de compra: ${dia}`, 10, 30);
             doc.text(`Hora de compra: ${hora}`, 10, 40);
-    
-            // Descargar el archivo PDF
+
             doc.save(`${producto}_compra.pdf`);
-    
-            // Enviar la venta al servidor para registrar la venta
+
             fetch('/registro-venta', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     producto: producto,
                     precio: precio,
                     fecha: dia,
                     hora: hora,
-                    categoria: 'Cuadros'  
-                })
+                    categoria: 'Cuadros',
+                }),
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Venta registrada correctamente:', data);
-            })
-            .catch(error => {
-                console.error('Error al registrar la venta:', error);
-            });
+                .then(response => response.json())
+                .then(data => console.log('Venta registrada correctamente:', data))
+                .catch(error => console.error('Error al registrar la venta:', error));
         }
     </script>
-    
+</body>
+</html>
